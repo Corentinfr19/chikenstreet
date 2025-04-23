@@ -5,6 +5,7 @@ on: [push]
 jobs:
   e2e-tests:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout du code
         uses: actions/checkout@v4
@@ -18,7 +19,9 @@ jobs:
         run: npm install
 
       - name: Démarrage du serveur de développement avec http-server
-        run: npx http-server ./src -p 8080 &
+        run: |
+          npx http-server ./src -p 8080 &
+          sleep 5
 
       - name: Attente du serveur et vérification de index.html
         run: |
@@ -36,10 +39,8 @@ jobs:
       - name: Exécution des tests TestCafe
         uses: DevExpress/testcafe-action@latest
         with:
-          args: |
-            cd test
-            npx testcafe chrome:headless e2e.test.js --reporter spec --base-url http://localhost:8080
-            
+          args: chrome:headless test/e2e.test.js --reporter spec --base-url http://localhost:8080
+
       - name: Arrêt du serveur de développement
         if: always()
         run: pkill -f "http-server"
