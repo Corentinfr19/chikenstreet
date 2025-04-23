@@ -1,0 +1,13 @@
+{
+    "name": "testcafe-demo",
+    "version": "1.0.0",
+    "description": "TestCafe E2E testing demo",
+    "scripts": {
+      "test": "testcafe chrome tests/e2e.test.js",
+      "test:ci": "testcafe chrome:headless tests/e2e.test.js"
+    },
+    "dependencies": {},
+    "devDependencies": {
+      "testcafe": "^3.6.2"
+    }
+  }

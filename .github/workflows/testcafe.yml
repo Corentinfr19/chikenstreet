@@ -1,0 +1,41 @@
+name: Test End-to-End
+
+on: [push]
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Installation de Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 'lts/*'
+
+      - name: Installation des dépendances
+        run: npm install
+
+      - name: Démarrage du serveur de développement avec http-server
+        run: npx http-server ./src -p 8080 &
+
+      - name: Attente du serveur
+        run: |
+          while ! curl -s --max-time 1 http://localhost:8080 > /dev/null 2>&1; do
+            echo "Attente du serveur..."
+            sleep 5
+          done
+          echo "Serveur démarré !"
+
+      - name: Exécution des tests TestCafe
+        uses: DevExpress/testcafe-action@latest
+        with:
+          browsers: 'chrome:headless'
+          test-files: 'tests/e2e.test.js' # Assurez-vous que le chemin est correct
+          reporter: 'spec'
+          baseUrl: 'http://localhost:8080'
+
+      - name: Arrêt du serveur de développement
+        if: always()
+        run: pkill -f "http-server"
