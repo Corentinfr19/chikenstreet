@@ -18,7 +18,7 @@ jobs:
         run: npm install
 
       - name: Démarrage du serveur de développement avec http-server
-        run: npx http-server -p 8080 &
+        run: npx http-server ./src -p 8080 &
 
       - name: Attente du serveur et vérification de index.html
         run: |
