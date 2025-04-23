@@ -39,7 +39,7 @@ jobs:
       - name: Exécution des tests TestCafe
         uses: DevExpress/testcafe-action@latest
         with:
-          args: chrome:headless test/e2e.test.js --reporter spec --base-url http://localhost:8080
+          args: chrome:headless tests/e2e.test.js --reporter spec --base-url http://localhost:8080
 
       - name: Arrêt du serveur de développement
         if: always()
