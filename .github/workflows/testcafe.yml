@@ -20,13 +20,15 @@ jobs:
       - name: Démarrage du serveur de développement avec http-server
         run: npx http-server -p 8080 &
 
-      - name: Attente du serveur
+      - name: Attente du serveur et vérification de index.html
         run: |
-          while ! curl -s --max-time 1 http://localhost:8080/index.html > /dev/null 2>&1; do
-            echo "Attente du serveur..."
-            sleep 5
-          done
-          echo "Serveur démarré !"
+          STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/index.html)
+          if [ "$STATUS_CODE" -eq 200 ]; then
+            echo "Serveur démarré et index.html accessible (code 200)"
+          else
+            echo "Erreur: index.html non accessible (code $STATUS_CODE)"
+            exit 1
+          fi
 
       - name: Changer les permissions de l'exécutable TestCafe
         run: chmod +x ./node_modules/.bin/testcafe
@@ -34,11 +36,7 @@ jobs:
       - name: Exécution des tests TestCafe
         uses: DevExpress/testcafe-action@latest
         with:
-          args: |
-            chrome:headless
-            tests/formulaire.test.js # Adaptez le chemin si nécessaire
-            --reporter spec
-            --base-url http://localhost:8080
+          args: chrome:headless test/formulaire.test.js --reporter spec --base-url http://localhost:8080
 
       - name: Arrêt du serveur de développement
         if: always()
