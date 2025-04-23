@@ -37,7 +37,7 @@ jobs:
         uses: DevExpress/testcafe-action@latest
         with:
           args: chrome:headless test/formulaire.test.js --reporter spec --base-url http://localhost:8080
-
+          
       - name: Arrêt du serveur de développement
         if: always()
         run: pkill -f "http-server"
